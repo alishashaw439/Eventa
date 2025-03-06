@@ -122,11 +122,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     iconButton: {
-        backgroundColor: "black",
+        backgroundColor: "#2c2610",
         borderRadius: 5,
         padding: 5,
         marginLeft: 5,
-        borderWidth: 1,
+        borderWidth: 0.5,
     },
     tabs: {
         flexDirection: "row",
