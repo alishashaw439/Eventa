@@ -1,29 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, FlatList, Image, StyleSheet, SafeAreaView } from "react-native";
-import { Icon } from 'react-native-elements';// Importing from react-native-elements
-
-const eventsData = [
-    {
-        id: "1",
-        title: "Designers Meetup 2025",
-        date: "10-12 April",
-        location: "Dhanmondi, Dhaka",
-        image: require('../../assets/CardImg.png'),
-        joined: 8,
-    },
-    {
-        id: "2",
-        title: "Outdoor Activities",
-        date: "15-17 May",
-        location: "New York City",
-        image: require('../../assets/CardImg.png'),
-        joined: 12,
-    },
-];
+import { Icon } from 'react-native-elements';
+import EventCard from "../components/EventCard";
+import { eventsData } from "../db/data";
 
 const HomeScreen = () => {
     const [selectedTab, setSelectedTab] = useState("Ongoing");
-    console.log("hghxsavcs",eventsData[0].image)
     return (
         <SafeAreaView style={styles.container}>
             <View>
@@ -33,9 +15,14 @@ const HomeScreen = () => {
                         <Icon name="arrow-back" size={24} color="white" type="material" />
                     </TouchableOpacity>
                     <Text style={styles.headerTitle}>Events</Text>
-                    <TouchableOpacity>
-                        <Icon name="search" type="material" size={24} color="white" />
-                    </TouchableOpacity>
+                    <View style={styles.iconContainer}>
+                        <TouchableOpacity>
+                            <Icon name="search" type="material" size={24} color="white" />
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Icon name="more-vert" type="material" size={24} color="white" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Search Bar */}
@@ -59,9 +46,6 @@ const HomeScreen = () => {
                         <Icon name="filter-list" type="material" size={20} color="#ffbe00" />
                     </TouchableOpacity>
                 </View>
-
-
-
                 {/* Tabs */}
                 <View style={styles.tabs}>
                     {["Ongoing", "Upcoming", "Past Events"].map((tab) => (
@@ -74,18 +58,8 @@ const HomeScreen = () => {
                         </TouchableOpacity>
                     ))}
                 </View>
-
                 {/* Event List */}
                 <EventList />
-
-                {/* Bottom Navigation */}
-                <View style={styles.bottomNav}>
-                    {["home", "explore", "confirmation-number", "shopping-cart", "person"].map((icon, index) => (
-                        <TouchableOpacity key={index} style={styles.navItem}>
-                            <Icon name={icon} type="material" size={24} color="white" />
-                        </TouchableOpacity>
-                    ))}
-                </View>
             </View>
         </SafeAreaView>
     );
@@ -97,31 +71,10 @@ const EventList = () => {
             data={eventsData}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-                <View style={styles.card}>
-                 
-                    <Image source={item.image} style={styles.eventImage} />
-               
-                    <View style={styles.cardContent}>
-                        <Text style={styles.eventTitle}>{item.title}</Text>
-                        <Text style={styles.eventDetails}>
-                            <Icon name="calendar-today" type="material" size={14} color="#ffbe00" /> {item.date} |{" "}
-                            <Icon name="location-on" type="material" size={14} color="#ffbe00" /> {item.location}
-                        </Text>
-                        <View style={styles.joinSection}>
-                            <View style={styles.joinedPeople}>
-                                <Image source={{ uri: "https://via.placeholder.com/30" }} style={styles.avatar} />
-                                <Image source={{ uri: "https://via.placeholder.com/30" }} style={[styles.avatar, { marginLeft: -10 }]} />
-                                <View style={styles.joinCount}>
-                                    <Text style={styles.joinText}>+{item.joined}</Text>
-                                </View>
-                            </View>
-                            <TouchableOpacity style={styles.joinButton}>
-                                <Text style={styles.joinButtonText}>Join Now</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
+                <EventCard item={item}></EventCard>
             )}
+            contentContainerStyle={{ paddingBottom: 180 }}
+            keyboardShouldPersistTaps="handled"
         />
     );
 };
@@ -132,6 +85,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#121212",
+    },
+    iconContainer: {
+        flexDirection: "row",
+        gap: 15,
     },
     header: {
         flexDirection: "row",
@@ -150,30 +107,35 @@ const styles = StyleSheet.create({
         backgroundColor: "#2A2A2A",
         borderRadius: 10,
         margin: 10,
-        paddingLeft: 40, // Space for the icon inside TextInput
+        paddingLeft: 40,
         paddingRight: 10,
         height: 40,
         position: "relative",
-      },
-      searchIcon: {
+    },
+    searchIcon: {
         position: "absolute",
-        left: 10, // Moves the search icon inside the input field
-      },
-      searchInput: {
+        left: 10,
+    },
+    searchInput: {
         flex: 1,
         color: "white",
         fontSize: 16,
-      },
-      iconButton: {
+    },
+    iconButton: {
         backgroundColor: "black",
         borderRadius: 5,
         padding: 5,
         marginLeft: 5,
-      },
+        borderWidth: 1,
+    },
     tabs: {
         flexDirection: "row",
         justifyContent: "space-evenly",
         padding: 10,
+        borderColor: "#ffbe00",
+        backgroundColor: "#2A2A2A",
+        margin: 10,
+        borderRadius: 10
     },
     tabButton: {
         paddingVertical: 8,
@@ -189,74 +151,5 @@ const styles = StyleSheet.create({
     activeTabText: {
         color: "black",
         fontWeight: "bold",
-    },
-    card: {
-        backgroundColor: "#1E1E1E",
-        margin: 10,
-        borderRadius: 10,
-        overflow: "hidden",
-    },
-    eventImage: {
-        width: "100%",
-        height: 300,
-        padding:15
-    },
-    cardContent: {
-        padding: 10,
-    },
-    eventTitle: {
-        fontSize: 24,
-        color: "white",
-        fontWeight: "bold",
-    },
-    eventDetails: {
-        fontSize: 16,
-        color: "gray",
-        marginVertical: 5,
-    },
-    joinSection: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    joinedPeople: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    avatar: {
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-    },
-    joinCount: {
-        backgroundColor: "#ffbe00",
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        alignItems: "center",
-        justifyContent: "center",
-        marginLeft: -10,
-    },
-    joinText: {
-        fontWeight: "bold",
-        color: "black",
-    },
-    joinButton: {
-        backgroundColor: "#ffbe00",
-        padding: 10,
-        borderRadius: 5,
-    },
-    joinButtonText: {
-        fontWeight: "bold",
-        color: "black",
-    },
-    bottomNav: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        backgroundColor: "#1E1E1E",
-        padding: 10,
-    },
-    navItem: {
-        padding: 10,
     },
 });
